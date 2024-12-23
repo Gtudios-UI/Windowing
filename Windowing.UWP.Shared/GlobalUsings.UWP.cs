@@ -31,6 +31,7 @@ namespace System.Threading.Tasks
         public void SetResult() => SetResult(default);
     }
 }
+#if !NET9_0_OR_GREATER
 namespace WinRT
 {
     static class Extension
@@ -46,3 +47,4 @@ namespace WinRT
         }
     }
 }
+#endif

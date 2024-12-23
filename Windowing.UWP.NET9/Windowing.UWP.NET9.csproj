@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+		<UseUwp>true</UseUwp>
+		<UseUwpTools>true</UseUwpTools>
+		<IsAotCompatible>true</IsAotCompatible>
+		<DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+		<RootNamespace>Gtudios.UI.Windowing</RootNamespace>
+		<AssemblyName>Gtudios.UI.Windowing.UWP.NET9</AssemblyName>
+		<LangVersion>12</LangVersion>
+		<Nullable>enable</Nullable>
+		<Version>1.0.3</Version>
+		<PackageOutputPath>D:\Programming\VS\.LocalNugetPackages</PackageOutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7-prerelease.241119001" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2950-prerelease" IncludeAssets="none" />
+		<PackageReference Include="WinWrapper.Windowing">
+			<Version>2.0.2</Version>
+		</PackageReference>
+		<PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="all" />
+	</ItemGroup>
+	<Import Project="..\Windowing\Windowing.projitems" Label="Shared" />
+	<Import Project="..\Windowing.UWP.Shared\Windowing.UWP.Shared.projitems" Label="Shared" />
+</Project>

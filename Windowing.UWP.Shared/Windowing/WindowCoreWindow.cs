@@ -71,7 +71,22 @@ public class WindowCoreWindow : Window
         get => CoreApplicationView.TitleBar.ExtendViewIntoTitleBar;
         set => CoreApplicationView.TitleBar.ExtendViewIntoTitleBar = value;
     }
-    public override nint WindowHandle => window.As<ICoreWindowInterop>().WindowHandle;
+#if NET9_0_OR_GREATER
+    public override nint WindowHandle
+    {
+        get
+        {
+            nint handle;
+            unsafe
+            {
+                window.As<ICoreWindowInterop>().get_WindowHandle(&handle);
+            }
+            return handle;
+        }
+    }
+#else
+    public nint WindowHandle => window.As<ICoreWindowInterop>().WindowHandle;
+#endif
     public override void Close()
     {
         if (CoreApplicationView.IsMain)
@@ -121,7 +136,7 @@ public class WindowCoreWindow : Window
             if (_Closing is not null)
             {
                 var navManager = Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView();
-                navManager.CloseRequested += WindowCoreWindow_CloseRequested;
+                navManager.CloseRequested -= WindowCoreWindow_CloseRequested;
                 navManager.CloseRequested += WindowCoreWindow_CloseRequested;
             }
 
@@ -137,11 +152,11 @@ public class WindowCoreWindow : Window
         }
     }
 
-    private async void WindowCoreWindow_CloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
+    private async void WindowCoreWindow_CloseRequested(object? sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
     {
         DefferalCanceledEventArgs args = new();
         var def = e.GetDeferral();
-        _Closing.Invoke(this, args);
+        _Closing?.Invoke(this, args);
         await (args.DeferralInternal?.WaitAsync() ?? Task.CompletedTask);
         e.Handled = args.Cancel;
         def.Complete();

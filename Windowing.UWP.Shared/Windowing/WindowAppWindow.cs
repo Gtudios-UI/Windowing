@@ -19,12 +19,17 @@ public class WindowAppWindow : Window
 
     private async void Window_CloseRequested(AppWindow sender, AppWindowCloseRequestedEventArgs e)
     {
-        DefferalCanceledEventArgs args = new();
         var def = e.GetDeferral();
-        _Closing?.Invoke(this, args);
-        await (args.DeferralInternal?.WaitAsync() ?? Task.CompletedTask);
+        var args = await CloseRequestImplement();
         e.Cancel = args.Cancel;
         def.Complete();
+    }
+    async Task<DefferalCanceledEventArgs> CloseRequestImplement()
+    {
+        DefferalCanceledEventArgs args = new();
+        _Closing?.Invoke(this, args);
+        await(args.DeferralInternal?.WaitAsync() ?? Task.CompletedTask);
+        return args;
     }
 
     private void Window_Closed(AppWindow sender, AppWindowClosedEventArgs args)
@@ -59,12 +64,34 @@ public class WindowAppWindow : Window
         }
     }
     public override Rect ClientBounds { get => SelfNote.ThrowNotImplemented<Rect>(); set => SelfNote.ThrowNotImplemented<Rect>(); }
+#if NET9_0_OR_GREATER
+    public override nint WindowHandle
+    {
+        get
+        {
+            WindowId wid;
+            unsafe
+            {
+                window.As<IApplicationWindow_HwndInterop>().get_WindowHandle(&wid);
+            }
+            return (nint)wid.Value;
+        }
+    }
+#else
     public override nint WindowHandle => (nint)window.As<IApplicationWindow_HwndInterop>().WindowHandle.Value;
+#endif
     public override bool ExtendsContentIntoTitleBar {
         get => AppWindow.TitleBar.ExtendsContentIntoTitleBar;
         set => AppWindow.TitleBar.ExtendsContentIntoTitleBar = value;
     }
-    public override void Close() => _ = window.CloseAsync();
+    public override async void Close()
+    {
+        var args = await CloseRequestImplement();
+        if (!args.Cancel)
+        {
+            await window.CloseAsync();
+        }
+    }
     EventHandler? _Closed;
     DefferalCanceledEventHandler? _Closing;
     public override event EventHandler Closed

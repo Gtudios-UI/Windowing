@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>f7402b7d-6c40-43b7-86b9-2ae802fb3090</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Windowing.UWP.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.UWP.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Windowing\Window.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Windowing\WindowAppWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Windowing\WindowCoreWindow.cs" />
+  </ItemGroup>
+</Project>

@@ -9,7 +9,7 @@ public class WindowAppWindow : Window
     public override object PlatformWindow { get; }
     public override UIElement RootContent
     {
-        get => SelfNote.ThrowNotImplemented<UIElement>();
+        get => XamlRoot.Content;
         set => SelfNote.ThrowNotImplemented();
     }
     public override Rect Bounds

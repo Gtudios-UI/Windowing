@@ -8,6 +8,36 @@ namespace Gtudios.UI.Windowing;
 
 partial class Window
 {
+#if NET9_0_OR_GREATER
+    static unsafe void* GetWindowContext(XamlRoot root)
+    {
+        void* reference;
+        unsafe
+        {
+            root.UIContext.As<IUIContextPartner>().get_WindowContext(&reference);
+        }
+        return reference;
+    }
+    public static unsafe Window GetFromXamlRoot(XamlRoot root)
+    {
+        var platformWindow = (nint)GetWindowContext(root);
+        try
+        {
+            var cw = CoreWindow.FromAbi(platformWindow);
+            return new WindowCoreWindow(cw, root);
+        } catch
+        {
+            try
+            {
+                var aw = AppWindow.FromAbi(platformWindow);
+                return new WindowAppWindow(aw, root);
+            } catch
+            {
+                throw new NotSupportedException();
+            }
+        }
+    }
+#else
     static object GetWindowContext(XamlRoot root)
     {
         return root.UIContext.As<IUIContextPartner>().WindowContext;
@@ -22,6 +52,7 @@ partial class Window
         else
             throw new NotSupportedException();
     }
+#endif
     public static async Task<Window> CreateAsync()
     {
         return await CreateAppWindowAsync();
